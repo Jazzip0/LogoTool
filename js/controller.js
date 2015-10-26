@@ -1,19 +1,28 @@
+/*
+TODO
+laad ding maken voor pagina
+
+**/
+
 var app = angular.module('myApp', ['ngMaterial']);
 app.controller('appController', function($scope) {
 $scope.textElements = [];
 $scope.colorElements = [];
-$scope.temp = "";
+$scope.temp = "test";
 $scope.color = {
 	red:223,
 	green:250,
 	blue:255
 }
+$scope.logo;
+var coloredElements = ["fill"]; //totdo get all style elements that color
 	 angular.element(document).ready(function () {
-		$(".text" ).each(function(i,ob) {
+		$("text" ).each(function(i,ob) {
 			$scope.textElements.push({text:this.textContent});
 				//this.setAttribute("ng-bind","textElements[" + i +"].text");
 		});
-		$("path").each(function(i,ob) {
+		var colorElements = $.merge($("path"),$("tspan"));//add elements with color fill //TODO loop trough nested svg elements
+		colorElements.each(function(i,ob) {
 			var rawColor = $(ob).css('fill').match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
 			var color = {css:rawColor[0],r:rawColor[1],g:rawColor[2],b:rawColor[3]};
 			for (var i = 0; i < $scope.colorElements.length; i++) {
@@ -42,6 +51,12 @@ $scope.color = {
 	  		console.debug($scope.textElements[i].text);
 	 		ob.textContent = $scope.textElements[i].text;
 	 	});
+	 }
+	 $scope.updateColor = function(set){
+	  	$.each(set.objects,function(i,ob) {
+	  		console.debug(ob);
+	  		$(ob).css("fill","rgb(" + set.color.r + "," + set.color.g + "," + set.color.b + ")");
+	  	})
 	 }
 
 	});
