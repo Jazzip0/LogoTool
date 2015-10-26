@@ -1,0 +1,31 @@
+<md-dialog aria-label="List dialog">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>{{notAvailableFonts.length > 1 ? "Fonts" : "Font"}} missing</h2>
+      <span flex></span>
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+  Please install the following {{notAvailableFonts.length > 1 ? "fonts" : "font"}}
+  
+    <md-list>
+      <md-list-item class="md-3-line" ng-repeat="font in notAvailableFonts">
+      <div layout="column" class="md-list-item-text">
+        <h3 ><b>{{font}}</b></h3>
+        <h4 ng-if="missingFontWebsites[font].length > 0">
+            download able:
+        </h4>
+        <p ngBind="missingFontWebsites[font]" ng-repeat="site in missingFontWebsites[font]" layout="column">
+          <a  href="{{site}}">{{site}}</a>
+        </p>
+        </div>
+        <md-divider></md-divider>
+      </md-list-item>
+    </md-list>
+  </md-dialog-content>
+  <div class="md-actions">
+    <md-button ng-click="closeDialog()" class="md-primary">
+      Close Dialog
+    </md-button>
+  </div>
+</md-dialog>
