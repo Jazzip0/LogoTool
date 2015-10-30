@@ -13,7 +13,7 @@
       <div layout="column" class="md-list-item-text">
         <h3 ><b>{{font}}</b></h3>
         <h4 ng-if="missingFontWebsites[font].length > 0">
-            download able:
+            downloadable at:
         </h4>
         <p ngBind="missingFontWebsites[font]" ng-repeat="site in missingFontWebsites[font]" layout="column">
           <a  href="{{site}}">{{site}}</a>

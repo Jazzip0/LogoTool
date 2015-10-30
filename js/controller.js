@@ -1,40 +1,36 @@
 /*
 TODO
-laad ding maken voor pagina
+ctr-z
+gradient
 
 save as optimized svg
 convert flowroot text to "normal text" (not supported by html 5) text>unflow
 **/
 
-var app = angular.module('myApp', ['ngMaterial']);
-app.controller('appController', function($scope, $mdDialog) {
-	var alert;
-	$scope.textElements = [];
-	$scope.colorElements = [];
-	$scope.temp = "test";
-	$scope.color = {
-		red:223,
-		green:250,
-		blue:255
+var app = angular.module('myApp', ['ngMaterial','ngFileUpload']);
+app.controller('appController', function($scope, $mdDialog,Upload) {
+	$scope.drag = function($isDragging, $class, $event){
+		console.debug($event.x)
+		if($isDragging && !$scope.uploadDialogOpened)
+		$scope.showUploadDialog();
+		else if(!$isDragging && $event.y == 0 && $event.x == 0)
+			$mdDialog.hide();
+
 	}
-	$scope.logo;
+	$scope.logo = {loading:false,inserted:false};
+	angular.element(document).ready(function () {
+		$scope.showUploadDialog();
+	});
+
 	var textElements = "text";
 	function getData(url)
 {
     return $.getJSON("http://query.yahooapis.com/v1/public/yql?"+
       "q=select%20*%20from%20html%20where%20url%3D%22"+
       encodeURIComponent(url)+"%22&format=json'&callback=?");
-      // , function(data){
-      //     if(data.results[0]){
-      //         $scope.missingFontWebsites[name].push(url);
-      //     }else{
-      //     	console.debug("nee")
-      //     }  
-     // }
-    //);
 }
-	$scope.missingFontWebsites = [];
 	var fontWebsites = [{before:"http://www.1001fonts.com/",after:"-font.html"},{before:"https://typekit.com/fonts/",after:""},{before:"http://fontzone.net/font-details/",after:""},{before:"https://www.google.com/fonts/specimen/",after:""}]; //{before:"",after:""}
+	$scope.missingFontWebsites = [];
 	var fontSitesCallBackData = [];
 	var fontSitesCallBack = [];
 	function getFontSitesCallBack(name){
@@ -49,8 +45,7 @@ app.controller('appController', function($scope, $mdDialog) {
 		$.merge(fontSitesCallBackData,waitData);//merge callbacks
 	}
 	var coloredElements = ["fill","stroke"]; //totdo get all style elements that color
-	function showDialog($event) {
-
+	function showFontDialog($event) {
 		var parentEl = angular.element(document.body);
 		$mdDialog.show({
 			parent: parentEl,
@@ -60,27 +55,116 @@ app.controller('appController', function($scope, $mdDialog) {
 				notAvailableFonts: $scope.notAvailableFonts,
 				missingFontWebsites: $scope.missingFontWebsites
 			},
-				controller: $scope.dialogController
+				controller: fontDialogController
 			});
 
 	}
-	$scope.dialogController = function DialogController($scope, $mdDialog, notAvailableFonts,missingFontWebsites) {
+	function fontDialogController($scope, $mdDialog, notAvailableFonts,missingFontWebsites) {
 			$scope.notAvailableFonts = notAvailableFonts;
 			$scope.missingFontWebsites = missingFontWebsites;
 			$scope.closeDialog = function() {
 				$mdDialog.hide();
 			}
-			$scope.update = function(){
-				console.debug("test");
-			}
-
 		}
-	$scope.notAvailableFonts = [];
-	 angular.element(document).ready(function () {
+	$scope.uploadDialogOpened = false;
+	$scope.showUploadDialog = function($event) {
+		$scope.uploadDialogOpened = true;
+		var parentEl = angular.element(document.body);
+		$mdDialog.show({
+			parent: parentEl,
+			targetEvent: $event,
+			templateUrl:'templates/upload-dialog-template.html',
+			enctype:"multipart/form-data",
+			locals: {
+				// notAvailableFonts: $scope.notAvailableFonts,
+				// missingFontWebsites: $scope.missingFontWebsites
+			},
+				controller: uploadDialogController
+			}).finally(function() {
+				$scope.uploadDialogOpened = false;
+				setImage();
+          });
+
+	}
+	function setImage(){
+		$scope.logo.inserted = false;
+				$scope.logo.loading= true;
+				$.get("upload/image.svg?" + Math.random() * 1000,function(svgDoc){
+				  var el = document.importNode(svgDoc.documentElement,true);
+				  var viewbox = $(el).context.attributes.getNamedItem('viewBox');
+						
+				if(viewbox == null){ //do stuff when no viewbox is present
+					var width = $(el).context.attributes.getNamedItem('width').nodeValue;
+					var height = $(el).context.attributes.getNamedItem('height').nodeValue;
+						el.setAttribute("viewBox", "0 0 " + width + " " + height); 
+						el.removeAttribute("height");
+						el.removeAttribute("width");
+				}
+				  $("#logo").html($(el));
+				  $scope.logo.loading = false;
+  					$scope.setPageForLogo();
+				},
+				"xml");
+	}
+	function uploadDialogController($scope, $mdDialog,Upload) {
+			$scope.closeDialog = function() {
+				$mdDialog.hide();
+			}
+			$scope.progressUpload = 0;
+			$scope.upload = function (file) {
+				console.debug(file);
+		        Upload.upload({
+		            url: 'upload.php',
+		             method: 'POST',
+				    file: file
+		        }).then(function (resp) {
+		            $scope.closeDialog();
+		        }, function (resp) {
+		            console.log('Error status: ' + resp.status);
+		        }, function (evt) {
+		            $scope.progressUpload = parseInt(100.0 * evt.loaded / evt.total);
+		           console.log('progress: ' + $scope.progressUpload + '% ');
+		        });
+    		};
+		}
+
+		$scope.upload = function (file) {
+				console.debug(file);
+		        Upload.upload({
+		            url: 'upload.php',
+		             method: 'POST',
+				    file: file
+		        }).then(function (resp) {
+		           setImage();
+		        }, function (resp) {
+		            console.log('Error status: ' + resp.status);
+		        }, function (evt) {
+		            $scope.progressUpload = parseInt(100.0 * evt.loaded / evt.total);
+		           console.log('progress: ' + $scope.progressUpload + '% ');
+		        });
+    		};
+	  $scope.updateText = function(set){
+	 		$.each(set.objects,function(i,ob) {
+	  			ob.textContent = set.text;
+	  	});
+	 }
+	 $scope.updateColor = function(set){
+	  	$.each(set.objects,function(i,ob) {
+	  		$(ob.ob).css(ob.el,"rgb(" + set.color.r + "," + set.color.g + "," + set.color.b + ")");
+	  	});
+	}
+	$scope.setPageForLogo = function(){
+		$scope.textElements = [];
+		$scope.colorElements = [];
+		$scope.missingFontWebsites = [];
+		fontSitesCallBackData = [];
+		fontSitesCallBack = [];
+		$scope.notAvailableFonts = [];
 		var fontDetector = new Detector();
 
 		$(textElements).each(function(i,ob) { //get all texts
 			var font = $(ob).css('font-family').toLowerCase();
+			console.debug(font);
 			if(fontDetector.detect(font) == false){ //detecr if font is available
 				$.each($scope.notAvailableFonts,function(i,ob){ //check if font is not in list
 					if(ob == font.toLowerCase())
@@ -111,20 +195,16 @@ app.controller('appController', function($scope, $mdDialog) {
         				jqxhr;
     			for(var i = 0; i < l; i++){
     				if(arguments[i][0].results.length > 0){
-    					console.debug(fontSitesCallBackData[i]);
     					if($scope.missingFontWebsites[fontSitesCallBackData[i].name] == undefined){
     						var ob = [];
     						ob.push(fontSitesCallBackData[i].url);
     						$scope.missingFontWebsites[fontSitesCallBackData[i].name] = ob;
 
-    					}else{
-    						console.debug("sdf");
-    					$scope.missingFontWebsites[fontSitesCallBackData[i].name].push(fontSitesCallBackData[i].url);
-    						}
+    					}else
+    						$scope.missingFontWebsites[fontSitesCallBackData[i].name].push(fontSitesCallBackData[i].url);
     				}
     			}
-    			console.debug($scope.missingFontWebsites);
-    			showDialog();
+    			showFontDialog();
 			});
 		}
 		$("#logo").find("*").not("g").not("svg").each(function(i,ob) { //get all elements in id logo but not the groups and svg
@@ -140,30 +220,12 @@ app.controller('appController', function($scope, $mdDialog) {
 					};
 					var objects = [];
 					objects.push({ob:ob,el:el});
-					$scope.colorElements.push({color:color,objects:objects});//create new for new color	
+					$scope.colorElements.push({color:color,objects:objects,show:false});//create new for new color	
 				}
 			})
 		});
-
+		$scope.logo.inserted = true;
 		$scope.$apply();
-
-		 $(".colorCard").hide();
-  		//toggle the componenet with class msg_body
-		  $('.color1').click(function()
-		  {
-		  	$(this).parent().parent().parent().find('.colorCard').slideToggle('slow');
-		  });
-
-	});
-	  $scope.updateText = function(set){
-	 		$.each(set.objects,function(i,ob) {
-	  			ob.textContent = set.text;
-	  	});
-	 }
-	 $scope.updateColor = function(set){
-	  	$.each(set.objects,function(i,ob) {
-	  		$(ob.ob).css(ob.el,"rgb(" + set.color.r + "," + set.color.g + "," + set.color.b + ")");
-	  	});
 	}
 });
 

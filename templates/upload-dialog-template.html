@@ -1,0 +1,52 @@
+
+<md-dialog aria-label="List dialog">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Upload a File</h2>
+      <span flex></span>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content>
+        <div  layout="column" layout layout-align="center center" id="uploadField">
+        <md-progress-circular ng-show="(progressUpload > 0 && progressUpload != 100)" md-mode="determinate" value="..."></md-progress-circular>
+        <div flex ng-show="(progressUpload == 0)"  ngf-select="upload($file)" ngf-drop="upload($file)" class="drop-box" id="upload" layout="column" layout-align="center center">
+          <div id="dropText" layout="row" layout-align="center center">
+              <div flex="80">
+                Click or Drop to upload files
+              </div>
+          </div>
+          <div>
+            <i class="fa fa-file-o"></i>
+          </div>
+            <div  ngf-no-file-drop>
+              File Drag/Drop is not supported for this browser
+            </div>
+        </div>
+      </div>
+  </md-dialog-content>
+  <div class="md-actions">
+    <md-button ng-click="closeDialog()" class="md-primary">
+      Close Dialog
+    </md-button>
+  </div>
+</md-dialog>
+<style type="text/css">
+#uploadField{
+  width:200px;
+    height:200px;
+}
+  #upload{
+     border:2px dashed gray;
+    
+    text-align: center;
+  }
+  #upload.dragover{
+    color:#FFF;
+    transition: all 0.7s ease;
+    transition-property: box-shadow,background,color;
+    background-color:#2196F3;
+    box-shadow: 0 0 0 20px #2196F3;
+    border:none;
+  }
+</style>
