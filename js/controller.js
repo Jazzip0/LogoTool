@@ -2,6 +2,8 @@
 TODO
 ctr-z
 gradient
+cookies
+look at fonts
 
 save as optimized svg
 convert flowroot text to "normal text" (not supported by html 5) text>unflow

@@ -29,6 +29,8 @@
 			margin:auto;
 			width:90vw;
 			max-width: 90%;
+			max-height: 90vh;
+			
 		}
 		.contentCard{
 			width:90vw;
@@ -39,6 +41,12 @@
 				max-width: 45vw;
 			}
 		}
+		@media screen and (max-width: 1200px) {
+	    	svg{
+	    		max-height:50vh;
+			}
+		}
+
 
 		.content{
 			margin:auto;
@@ -237,15 +245,6 @@
 </div>
 <div id="footer">
 </div>
-
-	
-
-
-
-
-
-
-
 <!-- Angular Material Dependencies -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
