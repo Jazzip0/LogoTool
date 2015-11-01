@@ -1,0 +1,69 @@
+
+<md-dialog aria-label="List dialog">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>Download Logo</h2>
+      <span flex></span>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content layout="column" layout-align="center center">
+	<div flex layout="column" layout-align="center center">
+		<div ng-hide="setDimentions" layout="column">
+			<div id="logoTemp" layout="column" layout-align="start start">
+			</div>
+			<h5 layout="row" layout-align="center center"> Dimensions {{width}}x{{height}} </h5>
+			<md-button  class='md-raised md-accent'id="link" >
+			</md-button>
+			<md-button  class='md-raised md-primary' ng-click="setDimentions = true">
+				Other dimensions
+			</md-button>
+		</div>
+		<div layout-align="center center" ng-show="setDimentions">
+			<md-input-container>
+				<label>Width</label>
+				<input ng-model="width" ng-change="setHeight()">
+			</md-input-container>
+			<i class="material-icons">link</i>
+			<md-input-container>
+				<label>Height</label>
+				<input ng-model="height" ng-change="setWidth()">
+			</md-input-container>
+			<md-button class="md-raised md-accent" ng-click="getLink()">
+				Get Download
+		</md-button>
+		</div>
+	</div>
+
+  </md-dialog-content>
+  <div class="md-actions">
+    <md-button ng-click="closeDialog()" class="md-primary">
+      Close Dialog
+    </md-button>
+  </div>
+  <canvas style="display:none" id="canvas" width="1000px" height="1000px"></canvas> 
+</md-dialog>
+
+<style type="text/css">
+h5{
+	    color: #666;
+}
+md-dialog{
+
+}
+#logoTemp{
+	border-radius: 3px;
+	border: 2px solid gray;
+	max-width: 200px;
+	max-height:200px;
+}
+md-dialog-content{
+	min-height:300px;
+	min-width: 300px;
+}
+a{
+	text-decoration: none;
+	    color: rgb(255,255,255);
+
+	}
+</style>
