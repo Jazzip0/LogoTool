@@ -49,7 +49,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		if (evtobj.keyCode == 90 && evtobj.ctrlKey && $scope.history.index >= 0){
 			if(evtobj.shiftKey){ //1+ to currenct
 				$scope.checkRedo();
-			}else 
+			}else
 				$scope.checkUndo();
 		}
 	}
@@ -58,15 +58,15 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 			$scope.showActionToast("undo","Undo Operation");
 			undoHistory();
 		}else
- 			$scope.openNoticeToast("No previous action present");
-		
+ 			$scope.openNoticeToast("No previous operation");
+
 	}
 	$scope.checkRedo = function(){
 		if($scope.history.index < $scope.history.events.length && $scope.history.index != $scope.history.events.length){ //if possible to go forward
 			$scope.showActionToast("redo","Redo Operation");
 			redoHistory();
 		}else
- 			$scope.openNoticeToast("No next action present");
+ 			$scope.openNoticeToast("No sequent operation");
 	}
 	function redoHistory(){
 		$scope.history.index++;
@@ -89,7 +89,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 			$.each(cur.ob.objects,function(i,ob) {
 				ob.textContent = cur.ob.text;
 			});
-		}else if(cur.variable == "colorElements"){	
+		}else if(cur.variable == "colorElements"){
 			$.each(cur.ob.objects,function(i,ob) {
 				$(ob.ob).css(ob.el,"rgb(" + cur.ob.color.r + "," + cur.ob.color.g + "," + cur.ob.color.b + ")");
 			});
@@ -99,7 +99,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		if(elements.variable == "textElements"){
 			$.each(elements.ob,function(i,ob) {
 				$.each(ob.objects,function(x,el) {
-					el.ob.textContent = ob.text;
+					el.textContent = ob.text;
 				});
 			});
 		}else if(elements.variable == "colorElements"){
@@ -125,7 +125,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
     });
   };
     $scope.openNoticeToast = function(text) {
-    	$mdToast.show($mdToast.simple().content(text));
+    	$mdToast.show($mdToast.simple().content(text).parent(angular.element('#toastPlacer')));
   };
 
 
@@ -136,7 +136,7 @@ $scope.isDragging = false;
 		$scope.showUploadDialog();
 		else if(!$isDragging && $event.y == 0 && $event.x == 0)
 			$mdDialog.hide();
-		
+
 
 	}
 	$scope.logo = {loading:false,inserted:false};
@@ -180,7 +180,6 @@ $scope.isDragging = false;
 			},
 				controller: fontDialogController
 			}).finally(function(){
-				if(!$scope.isDragging)
 				$('#dialogPlacer').css('pointer-events','none');
 			});
 
@@ -208,7 +207,6 @@ $scope.isDragging = false;
 			},
 				controller: uploadDialogController
 			}).finally(function() {
-				if(!$scope.isDragging)
 				$('#dialogPlacer').css('pointer-events','none');
 				$scope.uploadDialogOpened = false;
 				setImage();
@@ -237,7 +235,6 @@ $scope.isDragging = false;
 				canvas.width = $scope.width;
 				console.debug($scope.svg);
 				canvg('canvas', $scope.svg,{scaleWidth:$scope.width, ignoreDimensions: true});
-				console.debug("test2");
 				var img_PNG = Canvas2Image.convertToPNG(canvas);
 				$('#logoTemp').html($scope.svg);
 				//Canvas2Image.saveAsPNG(img_PNG);
@@ -276,7 +273,6 @@ $scope.isDragging = false;
 			},
 				controller: downloadDialogController
 			}).finally(function() {
-				if(!$scope.isDragging)
 				$('#dialogPlacer').css('pointer-events','none');
 				// $scope.uploadDialogOpened = false;
 				// setImage();
@@ -289,11 +285,11 @@ $scope.isDragging = false;
 				$.get("upload/image.svg?" + Math.random() * 1000,function(svgDoc){
 				  var el = document.importNode(svgDoc.documentElement,true);
 				  var viewbox = $(el).context.attributes.getNamedItem('viewBox');
-						
+
 				if(viewbox == null){ //do stuff when no viewbox is present
 					var width = $(el).context.attributes.getNamedItem('width').nodeValue;
 					var height = $(el).context.attributes.getNamedItem('height').nodeValue;
-						el.setAttribute("viewBox", "0 0 " + width + " " + height); 
+						el.setAttribute("viewBox", "0 0 " + width + " " + height);
 						el.removeAttribute("height");
 						el.removeAttribute("width");
 				}
@@ -353,7 +349,7 @@ $scope.isDragging = false;
 				$scope.notAvailableFonts.push(name); //add font to list
 				getFontSitesCallBack(name);
 			}
-			
+
 			var text = this.textContent;
 			for (var i = 0; i < $scope.textElements.length; i++) { //not add fields for equal texts
 					if($scope.textElements[i].text == text){
@@ -363,7 +359,7 @@ $scope.isDragging = false;
 				};
 				var objects = [];
 				objects.push(ob);
-				$scope.textElements.push({text:text,objects:objects});//create new for new color	
+				$scope.textElements.push({text:text,objects:objects});//create new for new color
 		});
 		if($scope.notAvailableFonts.length > 0){ //show dialog if one or more fonts are not available
 			var obj = []
@@ -398,7 +394,7 @@ $scope.isDragging = false;
 					};
 					var objects = [];
 					objects.push({ob:ob,el:el});
-					$scope.colorElements.push({color:color,objects:objects,show:false});//create new for new color	
+					$scope.colorElements.push({color:color,objects:objects,show:false});//create new for new color
 				}
 			})
 		});
@@ -408,4 +404,3 @@ $scope.isDragging = false;
 		$scope.$apply();
 	}
 });
-
