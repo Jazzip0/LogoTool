@@ -100,11 +100,20 @@ svg{
   }
 }
 @media screen and (min-width:1200px){
+  #svgLogo{
+    height: 80%;
+  }
   #iconHeader{
       height: 100vh;
   }
+  #iconHeaderContent{
+    background-color: transparent;
+  }
   #zoomButtons{
     bottom:60px;
+  }
+  body{
+    background-color: #e5e5e5;
   }
   div #resetButton{
     bottom:60px;
