@@ -140,23 +140,23 @@
 										<div class="colorText" >
 											Adjust color
 										</div>
-										<div class="color1 colorField" ng-click="colorCardShow(field)" ngbind="field.color" style="background-color:rgb({{field.color.r}},{{field.color.g}},{{field.color.b}})">
+										<div id='colorField{{$index}}' class="color1 colorField" ng-init="setFeedback(field,'colorElements',$index)" ng-click="colorCardShow(field)" ngbind="field.color" style="background-color:rgba({{field.color.r}},{{field.color.g}},{{field.color.b}},{{field.color.a}})">
 											&nbsp;
 										</div>
 									</div>
 								</md-list-item>
-								<md-card class="colorCard" ng-show="field.show" ng-init="setFeedback(field,'colorElements',$index)">
+								<md-card class="colorCard" ng-show="field.show">
 									<md-card-content>
-										<md-tabs>
-											<md-tab label="RGB">
-												<md-content >
+										<md-tabs flex>
+											<md-tab label="RGBA" flex>
+												<md-content flex>
 													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex min="0" max="255" ng-model="field.color.r" aria-label="red" id="red-slider" ng-change="updateColor(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
 															<md-input-container flex>
 																<label>Red</label>
-																<input ng-model="field.color.r" ng-change='setHistory("colorElements",field)'>
+																<input ng-model="field.color.r" ng-change='setHistory("colorElements",field);updateColor(field)'>
 															</md-input-container>
 														</div>
 													</div>
@@ -166,7 +166,7 @@
 														<div flex="20"  layout layout-align="right center" >
 															<md-input-container flex>
 																<label>Green</label>
-																<input ng-model="field.color.g" ng-change='setHistory("colorElements",field)'>
+																<input ng-model="field.color.g" ng-change='setHistory("colorElements",field);updateColor(field)'>
 															</md-input-container>
 														</div>
 													</div>
@@ -176,41 +176,61 @@
 														<div flex="20"  layout layout-align="right center">
 															<md-input-container flex>
 																<label>Blue</label>
-																<input ng-model="field.color.b" ng-change='setHistory("colorElements",field)'>
+																<input ng-model="field.color.b" ng-change='setHistory("colorElements",field);updateColor(field)'>
+															</md-input-container>
+														</div>
+													</div>
+													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+														<md-slider step="0.0039" flex ng-model="field.color.a" min="0" max="1" aria-label="alpha" id="alpha-slider" ng-change="updateColor(field)">
+														</md-slider>
+														<div flex="20"  layout layout-align="right center">
+															<md-input-container flex>
+																<label>Alpha</label>
+																<input ng-model="field.color.a" ng-change='setHistory("colorElements",field);updateColor(field)'>
 															</md-input-container>
 														</div>
 													</div>
 												</md-content>
 											</md-tab>
-											<md-tab label="HSL">
+											<md-tab label="HSLA">
 												<md-content>
 													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
-														<md-slider flex min="0" max="255" ng-model="field.color.r" aria-label="red" id="hue-slider" ng-change="updateColor(field)" >
+														<md-slider flex min="0" max="255" ng-model="field.HSL.h" aria-label="red" id="hue-slider" ng-change="updateHSL(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
 															<md-input-container flex>
 																<label>Hue</label>
-																<input ng-model="field.color.r" ng-change='setHistory("colorElements",field)'>
+																<input ng-model="field.HSL.h" ng-change='setHistory("colorElements",field);updateHSL(field)'>
 															</md-input-container>
 														</div>
 													</div>
 													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
-														<md-slider flex ng-model="field.color.g" min="0" max="255" aria-label="green" id="saturation-slider" ng-change="updateColor(field)" >
+														<md-slider flex ng-model="field.HSL.s" min="0" max="255" aria-label="green" id="saturation-slider" ng-change="updateHSL(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center" >
 															<md-input-container flex>
 																<label>Saturation</label>
-																<input ng-model="field.color.g" ng-change='setHistory("colorElements",field)'>
+																<input ng-model="field.HSL.s" ng-change='setHistory("colorElements",field);updateHSL(field)'>
 															</md-input-container>
 														</div>
 													</div>
 													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
-														<md-slider flex ng-model="field.color.b" min="0" max="255" aria-label="blue" id="lightness-slider" ng-change="updateColor(field)" >
+														<md-slider flex ng-model="field.HSL.l" min="0" max="255" aria-label="blue" id="lightness-slider" ng-change="updateHSL(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
 															<md-input-container flex>
 																<label>Lightness</label>
-																<input ng-model="field.color.b" ng-change='setHistory("colorElements",field)'>
+																<input ng-model="field.HSL.l" ng-change='setHistory("colorElements",field);updateHSL(field)'>
+															</md-input-container>
+														</div>
+													</div>
+													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+														<md-slider step="0.0039" flex ng-model="field.color.a" min="0" max="1" aria-label="alpha" id="alpha-slider" ng-change="updateColor(field)">
+														</md-slider>
+														<div flex="20"  layout layout-align="right center">
+															<md-input-container flex>
+																<label>Alpha</label>
+																<input ng-model="field.color.a" ng-change='setHistory("colorElements",field);updateColor(field)'>
 															</md-input-container>
 														</div>
 													</div>

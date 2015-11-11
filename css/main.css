@@ -155,6 +155,18 @@ md-content{
   background:rgba(0, 0, 0, 0.0);
 }
 
+#alpha-slider .md-track {
+  background: linear-gradient(to right, #FFF, #4f4f4f)
+}
+#alpha-slider .md-track.md-track-fill {
+  background:rgba(0, 0, 0, 0.0);
+}
+
+#alpha-slider .md-thumb:after {
+  border-color: #4f4f4f;
+  background-color: #4f4f4f
+}
+
 #blue-slider .md-thumb:after {
   border-color: #3F51B5;
   background-color: #3F51B5;
@@ -162,6 +174,7 @@ md-content{
 #blue-slider .md-track.md-track-fill {
   background-color:#3F51B5;
 }
+
 #green-slider .md-thumb:after {
   border-color: #4CAF50;
   background-color: #4CAF50;
@@ -240,5 +253,12 @@ md-tooltip{
   right:10px;
 }
 md-tab-content{
-  overflow: hidden;
+    overflow: hidden;
+}
+md-tabs{
+  height:344px;
+}
+#svgTempLogo{
+  width:100%;
+  height:100%;
 }
