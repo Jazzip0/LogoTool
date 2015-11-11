@@ -4,6 +4,7 @@
 ####LogoTool
 TODO
 Available [here](http://joep.pieterbos.me/logotool).
+![banner](http://joep.pieterbos.me/logotool/images/logotool_example.png)
 *Have fun*
 
 ####Plugins
