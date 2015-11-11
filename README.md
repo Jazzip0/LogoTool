@@ -3,6 +3,7 @@
 
 ####LogoTool
 TODO
+Available [here](http://joep.pieterbos.me/logotool).
 *Have fun*
 
 ####Plugins
