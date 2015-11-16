@@ -66,6 +66,7 @@
 				download
 			</md-tooltip>
 		</md-button>
+
 		<md-button href="http://joepschyns.me" target="_blank" aria-label="joepschyns.me" ng-hide-sm="true" id="linkToJoepSchyns">
 			Joep Schyns
 		</md-button>

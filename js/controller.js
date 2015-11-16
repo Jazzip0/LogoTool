@@ -1,83 +1,23 @@
-/*
-TODO
-ctr-z
-gradient
-cookies
-look at fonts
-zoom logo
+var app = angular.module('myApp', ['ngMaterial','ngFileUpload']);
+app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 
-save as optimized svg
-convert flowroot text to "normal text" (not supported by html 5) text>unflow
-**/
-
-var app = angular.module('myApp', ['ngMaterial','ngFileUpload','ngSanitize']);
-app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sanitize) {
-	this.openMenu = function($mdOpenMenu, ev) {
-		originatorEv = ev;
-		$mdOpenMenu(ev);
-	};
-	$scope.history = {
+	//START Set color and text explanation make changes reversable
+	$scope.history = { //history is saved as object:
 		events:[],
-		index:0,
+		index:0, //current
 		start:{}
 	};
-	$scope.setFeedback= function(field,array,index){
-		$.each(field.objects,function(i,ob){
-			$(ob.ob).hover(hoverin,hoverout);
-			$(ob.ob).mousedown(clickel);
-			$(ob.ob).mouseup(mouseUp);
-			ob.ob.inArray = array;
-			ob.ob.i= index;
-		});
-	}
-	$scope.elementsLocked = false;
-	function mouseUp(){
-		$(this).css("fill",this.color);
-	}
-	function clickel(){
-		this.color = $(this).css("fill");
-		$(this).css("fill","#c7c7c7");
-		if($scope.elementsLocked)
-		openEl(this);
-		else
-		$scope.elementsLocked = true;
-	}
-	function hoverout(){
-	}
 
-	function hoverin(){
-		if(!$scope.elementsLocked)
-		openEl(this);
-	}
-	function openEl(el){
-		var field = $scope[el.inArray][el.i];
-		$.each($scope[el.inArray],function(i,ob){
-			if(ob == field){
-				//$('#scrollContent').animate({ scrollTop: $("#colorField" + el.i).offset().top + 200}, 500); //TODO unstables
-				ob.show = !ob.show;
-			}else
-			ob.show = false;
-		});
-		$scope.$apply();
-	}
-	$scope.colorCardShow = function(field){
-		$.each($scope.colorElements,function(i,ob){
-			if(ob == field)
-			ob.show = !ob.show;
-			else
-			ob.show = false;
-		});
-	}
-	$scope.setHistory = function(vari,ob){
+	$scope.setHistory = function(vari,ob){ //set history for a change
 		$scope.history.events = $scope.history.events.slice(0,$scope.history.index);
 		$scope.history.events.push({variable:vari,ob:$.extend(true,{},ob)});
 		$scope.history.index = $scope.history.events.length;
 	}
-	$scope.setStartHistory = function(vari,ob){
+	$scope.setStartHistory = function(vari,ob){ //set history for the start of the session
 		if(ob.length > 0) //if variable is present
 		$scope.history.start[vari] = {variable:vari,ob:$.extend(true,{},ob)};
 	}
-	window.onkeydown=function(e){
+	window.onkeydown=function(e){ //get ctrl-z and ctr-shift-z to trigger re and undo
 		var evtobj = window.event? event : e;
 		if (evtobj.keyCode == 90 && evtobj.ctrlKey && $scope.history.index >= 0){
 			if(evtobj.shiftKey){ //1+ to currenct
@@ -86,7 +26,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 			$scope.checkUndo();
 		}
 	}
-	$scope.checkUndo = function(){
+	$scope.checkUndo = function(){ //check if undo is possible
 		if($scope.history.index > 0){ //back in history
 			$scope.showActionToast("undo","Undo Operation");
 			undoHistory();
@@ -94,7 +34,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		$scope.openNoticeToast("No previous operation");
 
 	}
-	$scope.checkRedo = function(){
+	$scope.checkRedo = function(){ //check if undo is possible
 		if($scope.history.index < $scope.history.events.length && $scope.history.index != $scope.history.events.length){ //if possible to go forward
 			$scope.showActionToast("redo","Redo Operation");
 			redoHistory();
@@ -111,16 +51,15 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		if($scope.history.index > 0){
 			var cur = $scope.history.events[$scope.history.index - 1];
 			setDom(cur);
-		}else{
-			$scope.resetLogo();
-		}
+		}else
+		$scope.resetLogo();
 	}
 	$scope.resetLogo = function(){
 		$.each($scope.history.start,function(i,ob){ //set default for every set element
 			setDomStart(ob);
 		});
 	}
-	function setDom(cur){
+	function setDom(cur){ //change colors or text in the logo
 		if(cur.variable == "textElements"){
 			setTextEl(cur.ob)
 			$.each(cur.ob.objects,function(i,ob) {
@@ -133,34 +72,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 			});
 		}
 	}
-	function setColorEl(cur){
-		var rawColor = $(cur.objects[0].ob).css(cur.objects[0].el).match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
-		console.debug(rawColor);
-		var color = {css:rawColor[0],r:rawColor[1],g:rawColor[2],b:rawColor[3],a:rawColor[4]}
-		var i = findIndexColor(color);
-		var rawHSL = rgbToHsl(cur.color.r,cur.color.g,cur.color.b);
-		var hsl = {h:rawHSL[0],s:rawHSL[1],l:rawHSL[2]};
-		$scope.colorElements[i].HSL = hsl;
-		$scope.colorElements[i].color = cur.color;
-	}
-	function setTextEl(cur){
-		$scope.textElements[findIndexText(cur.objects[0].textContent)].text = cur.text;
-	}
-	function findIndexText(vari){
-		for (var i = 0; i < $scope.textElements.length; i++) {
-			if(ar[i].text == vari)
-			return i;
-		}
-		return false;
-	}
-	function findIndexColor(vari){
-		for (var i = 0; i < $scope.colorElements.length; i++) {
-			if($scope.colorElements[i].color.r == vari.r && $scope.colorElements[i].color.g == vari.g && $scope.colorElements[i].color.b == vari.b)
-			return i;
-		}
-		return false;
-	}
-	function setDomStart(elements){
+	function setDomStart(elements){ //change text or colors to their initial value
 		if(elements.variable == "textElements"){
 			$.each(elements.ob,function(i,ob) {
 				$.each(ob.objects,function(x,el) {
@@ -170,14 +82,104 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		}else if(elements.variable == "colorElements"){
 			$.each(elements.ob,function(i,ob) {
 				setColorEl(ob);
-
 				$.each(ob.objects,function(x,el) {
 					$(el.ob).css(el.el,"rgba(" + ob.color.r + "," + ob.color.g + "," + ob.color.b + "," + ob.color.a + ")");
 				});
 			});
 		}
 	}
-	$scope.showActionToast = function(type,text) {
+	function setColorEl(cur){ //set color arrays to current values
+		var rawColor = $(cur.objects[0].ob).css(cur.objects[0].el).match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
+		var color = {css:rawColor[0],r:rawColor[1],g:rawColor[2],b:rawColor[3],a:rawColor[4]}
+		var i = findIndexColor(color);
+		var rawHSL = rgbToHsl(cur.color.r,cur.color.g,cur.color.b);
+		var hsl = {h:rawHSL[0],s:rawHSL[1],l:rawHSL[2]};
+		$scope.colorElements[i].HSL = hsl;
+		$scope.colorElements[i].color = cur.color;
+	}
+	function setTextEl(cur){ //set text arrays to current values
+		$scope.textElements[findIndexText(cur.objects[0].textContent)].text = cur.text;
+	}
+	function findIndexText(vari){ //get index value in text array
+		for (var i = 0; i < $scope.textElements.length; i++) {
+			if(ar[i].text == vari)
+			return i;
+		}
+		return false;
+	}
+	function findIndexColor(vari){ //get index value in color array
+		for (var i = 0; i < $scope.colorElements.length; i++) {
+			if($scope.colorElements[i].color.r == vari.r && $scope.colorElements[i].color.g == vari.g && $scope.colorElements[i].color.b == vari.b)
+			return i;
+		}
+		return false;
+	}
+	$scope.updateText = function(set){
+		$scope.setHistory("textElements",set);
+		$.each(set.objects,function(i,ob) {
+			ob.textContent = set.text;
+		});
+	}
+	$scope.updateColor = function(set){
+		$.each(set.objects,function(i,ob) {
+			$(ob.ob).css(ob.el,"rgba(" + set.color.r + "," + set.color.g + "," + set.color.b + "," + set.color.a + ")");
+		});
+	}
+	$scope.updateHSL = function(set){
+		var rawRGB = hslToRgb(set.HSL.h / 255.0,set.HSL.s / 255.0,set.HSL.l / 255.0);
+		set.color.r = rawRGB[0];
+		set.color.g = rawRGB[1];
+		set.color.b = rawRGB[2];
+		$scope.updateColor(set);
+	}
+	//END Set Color and text
+
+	//START Hover || feedback explanation make clear which parts correspond to which field
+	$scope.setFeedback= function(field,array,index){//on init set hover mousedoen mouseup functions
+		$.each(field.objects,function(i,ob){
+			$(ob.ob).hover(hoverin,hoverout);
+			$(ob.ob).mousedown(clickel);
+			$(ob.ob).mouseup(mouseUp);
+			ob.ob.inArray = array;
+			ob.ob.i= index;
+		});
+	}
+	$scope.elementsLocked = false; //lick elements on click
+	function mouseUp(){ //show user that he selected an element
+		$(this).css("fill",this.color);
+	}
+	function clickel(){ //lock element
+		this.color = $(this).css("fill");
+		$(this).css("fill","#c7c7c7");
+		if($scope.elementsLocked)
+		openEl(this);
+		else
+		$scope.elementsLocked = true;
+	}
+	function hoverout(){}
+
+	function hoverin(){
+		if(!$scope.elementsLocked)
+		openEl(this);
+	}
+	function openEl(el){ //open field corresponding to hover
+		var field = $scope[el.inArray][el.i];
+		$scope.colorCardShow(field);
+	}
+
+	$scope.colorCardShow = function(field){ //open current field and close the rest
+		$.each($scope.colorElements,function(i,ob){
+			if(ob == field)
+			ob.show = !ob.show;
+			else
+			ob.show = false;
+		});
+			$scope.$apply();
+	}
+	//END Hover || feedback
+
+	//START Toasts
+	$scope.showActionToast = function(type,text) { //open toast with an undo button
 		var toast = $mdToast.simple()
 		.content(text)
 		.action('UNDO')
@@ -191,51 +193,28 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 			undoHistory();
 		});
 	};
-	$scope.openNoticeToast = function(text) {
+	$scope.openNoticeToast = function(text) { //open toast with plain text
 		$mdToast.show($mdToast.simple().content(text).parent(angular.element('#toastPlacer')));
 	};
+	//END Toasts
 
-
+	//START Upload
 	$scope.isDragging = false;
-	$scope.drag = function($isDragging, $class, $event){
+	$scope.drag = function($isDragging, $class, $event){ //if an file is dragged in or out the screen
 		$scope.isDragging = $isDragging;
-		if($isDragging && !$scope.uploadDialogOpened)
+		if($isDragging && !$scope.uploadDialogOpened) //open dialog when none is present
 		$scope.showUploadDialog();
-		else if(!$isDragging && $event.y == 0 && $event.x == 0)
+		else if(!$isDragging && $event.y == 0 && $event.x == 0) //if the file is dragged off the screen
 		$mdDialog.hide();
-
-
 	}
 	$scope.logo = {loading:false};
-	angular.element(document).ready(function () {
+	angular.element(document).ready(function () { //show upload dialog on load
 		$scope.showUploadDialog();
 	});
+	//END Upload
 
-	var textElements = "text";
-	function getData(url)
-	{
-		return $.getJSON("http://query.yahooapis.com/v1/public/yql?"+
-		"q=select%20*%20from%20html%20where%20url%3D%22"+
-		encodeURIComponent(url)+"%22&format=json'&callback=?");
-	}
-	var fontWebsites = [{before:"http://www.1001fonts.com/",after:"-font.html"},{before:"https://typekit.com/fonts/",after:""},{before:"http://fontzone.net/font-details/",after:""},{before:"https://www.google.com/fonts/specimen/",after:""}]; //{before:"",after:""}
-	$scope.missingFontWebsites = [];
-	var fontSitesCallBackData = [];
-	var fontSitesCallBack = [];
-	function getFontSitesCallBack(name){
-		var wait = [];
-		var waitData = [];
-		$.each(fontWebsites,function(i,ob){
-			var url = ob.before + name + ob.after;
-			wait.push(getData(url));
-			waitData.push({name:name,url:url});
-		});
-		$.merge(fontSitesCallBack,wait);//merge callbacks
-		$.merge(fontSitesCallBackData,waitData);//merge callbacks
-	}
-	$('#dialogPlacer').css('pointer-events','auto');
-	var coloredElements = ["fill","stroke"]; //totdo get all style elements that color
-	function showFontDialog($event) {
+	//START Dialogs
+	function showFontDialog($event) { //TODO
 		var parentEl = angular.element('body');
 		$mdDialog.show({
 			parent: parentEl,
@@ -249,7 +228,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		}).finally(function(){
 			$('#dialogPlacer').css('pointer-events','none');
 		});
-
 	}
 	function fontDialogController($scope, $mdDialog, notAvailableFonts,missingFontWebsites) {
 		$scope.notAvailableFonts = notAvailableFonts;
@@ -268,22 +246,55 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 			targetEvent: $event,
 			templateUrl:'templates/upload-dialog-template.html',
 			enctype:"multipart/form-data",
-			locals: {
-				// notAvailableFonts: $scope.notAvailableFonts,
-				// missingFontWebsites: $scope.missingFontWebsites
-			},
 			controller: uploadDialogController
 		}).finally(function() {
 			$('#dialogPlacer').css('pointer-events','none');
 			$scope.uploadDialogOpened = false;
-			console.debug(this);
 			if(this.upload == undefined || this.upload){
 				setImage();
 				this.upload = false;
 			}
-
 		});
-
+	}
+	function uploadDialogController($scope, $mdDialog,Upload) {
+		$scope.closeDialog = function() {
+			$mdDialog.hide();
+		}
+		$scope.progressUpload = 0;
+		$scope.upload = function (file) {
+			Upload.upload({
+				url: 'upload.php',
+				method: 'POST',
+				file: file
+			}).then(function (resp) {
+				$scope.closeDialog();
+				this.upload = true;
+			}, function (resp) {
+				console.log('Error status: ' + resp.status);
+			}, function (evt) {
+				$scope.progressUpload = parseInt(100.0 * evt.loaded / evt.total);
+			});
+		};
+	}
+	$scope.showDownloadDialog = function($event) {
+		var box = document.getElementById('svgLogo').getAttribute('viewBox').split(/\s+|,/);
+		var ratio = box[3] / box[2];
+		var svg = $('#svgLogo').parent().html();
+		$('#dialogPlacer').css('pointer-events','auto');
+		var parentEl = angular.element('#dialogPlacer');
+		$mdDialog.show({
+			parent: parentEl,
+			targetEvent: $event,
+			templateUrl:'templates/download-dialog-template.html',
+			enctype:"multipart/form-data",
+			locals: {
+				ratio : ratio,
+				svg:svg,
+			},
+			controller: downloadDialogController
+		}).finally(function() {
+			$('#dialogPlacer').css('pointer-events','none');
+		});
 	}
 	function downloadDialogController($scope,ratio,svg ) {
 		$scope.loading = false;
@@ -336,39 +347,39 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 					$scope.$apply();
 				};
 			}, function (resp) {
-				console.log('Error status: ' + resp.status);
-			}, function (evt) {
-				console.log("progress");
-			});
+			}, function (evt) {});
 			$scope.setDimentions = false;
 		}
 	}
+	//END Dialogs
 
-	$scope.showDownloadDialog = function($event) {
-		var box = document.getElementById('svgLogo').getAttribute('viewBox').split(/\s+|,/);
-		var ratio = box[3] / box[2];
-		var svg = $('#svgLogo').parent().html();
-		$('#dialogPlacer').css('pointer-events','auto');
-		var parentEl = angular.element('#dialogPlacer');
-		$mdDialog.show({
-			parent: parentEl,
-			targetEvent: $event,
-			templateUrl:'templates/download-dialog-template.html',
-			enctype:"multipart/form-data",
-			locals: {
-				ratio : ratio,
-				svg:svg,
-
-
-			},
-			controller: downloadDialogController
-		}).finally(function() {
-			$('#dialogPlacer').css('pointer-events','none');
-			// $scope.uploadDialogOpened = false;
-			// setImage();
+	//START Font
+	//all website that supply fontds and give an 404 on non excisiting pages
+	var fontWebsites = [{before:"http://www.1001fonts.com/",after:"-font.html"},{before:"https://typekit.com/fonts/",after:""},{before:"http://fontzone.net/font-details/",after:""},{before:"https://www.google.com/fonts/specimen/",after:""}]; //{before:"",after:""}
+	$scope.missingFontWebsites = [];
+	var fontSitesCallBackData = [];
+	var fontSitesCallBack = [];
+	function getFontSitesCallBack(name){
+		var wait = [];
+		var waitData = [];
+		$.each(fontWebsites,function(i,ob){
+			var url = ob.before + name + ob.after;
+			wait.push(getData(url));
+			waitData.push({name:name,url:url});
 		});
-
+		$.merge(fontSitesCallBack,wait);//merge callbacks
+		$.merge(fontSitesCallBackData,waitData);//merge callbacks
 	}
+	function getData(url)	{
+		return $.getJSON("http://query.yahooapis.com/v1/public/yql?"+
+		"q=select%20*%20from%20html%20where%20url%3D%22"+
+		encodeURIComponent(url)+"%22&format=json'&callback=?");
+	}
+	//END Font
+
+	//START init
+	var textElements = "text";
+	var coloredElements = ["fill","stroke"]; //TODO add gradient
 	function setImage(){
 		$scope.logo.loading= true;
 		$.get("upload/image.svg?" + Math.random() * 1000,function(svgDoc){
@@ -389,44 +400,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		},
 		"xml");
 	}
-	function uploadDialogController($scope, $mdDialog,Upload) {
-		$scope.closeDialog = function() {
-			$mdDialog.hide();
-		}
-		$scope.progressUpload = 0;
-		$scope.upload = function (file) {
-			Upload.upload({
-				url: 'upload.php',
-				method: 'POST',
-				file: file
-			}).then(function (resp) {
-				$scope.closeDialog();
-				this.upload = true;
-			}, function (resp) {
-				console.log('Error status: ' + resp.status);
-			}, function (evt) {
-				$scope.progressUpload = parseInt(100.0 * evt.loaded / evt.total);
-			});
-		};
-	}
-	$scope.updateText = function(set){
-		$scope.setHistory("textElements",set);
-		$.each(set.objects,function(i,ob) {
-			ob.textContent = set.text;
-		});
-	}
-	$scope.updateColor = function(set){
-		$.each(set.objects,function(i,ob) {
-			$(ob.ob).css(ob.el,"rgba(" + set.color.r + "," + set.color.g + "," + set.color.b + "," + set.color.a + ")");
-		});
-	}
-	$scope.updateHSL = function(set){
-		var rawRGB = hslToRgb(set.HSL.h / 255.0,set.HSL.s / 255.0,set.HSL.l / 255.0);
-		set.color.r = rawRGB[0];
-		set.color.g = rawRGB[1];
-		set.color.b = rawRGB[2];
-		$scope.updateColor(set);
-	}
 	$scope.setPageForLogo = function(){
 		$scope.textElements = [];
 		$scope.colorElements = [];
@@ -435,7 +408,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 		fontSitesCallBack = [];
 		$scope.notAvailableFonts = [];
 		var fontDetector = new Detector();
-
 		$(textElements).each(function(i,ob) { //get all texts
 			var font = $(ob).css('font-family').toLowerCase();
 			if(fontDetector.detect(font) == false){ //detecr if font is available
@@ -447,7 +419,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 				$scope.notAvailableFonts.push(name); //add font to list
 				getFontSitesCallBack(name);
 			}
-
 			var text = this.textContent;
 			for (var i = 0; i < $scope.textElements.length; i++) { //not add fields for equal texts
 				if($scope.textElements[i].text == text){
@@ -528,40 +499,11 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 
 		$scope.$apply();
 	}
-	var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+	//END inti
 
-	function preventDefault(e) {
-		e = e || window.event;
-		if (e.preventDefault)
-		e.preventDefault();
-		e.returnValue = false;
-	}
 
-	function preventDefaultForScrollKeys(e) {
-		if (keys[e.keyCode]) {
-			preventDefault(e);
-			return false;
-		}
-	}
-
-	function disableScroll() {
-		if (window.addEventListener) // older FF
-		window.addEventListener('DOMMouseScroll', preventDefault, false);
-		window.onwheel = preventDefault; // modern standard
-		window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-		window.ontouchmove  = preventDefault; // mobile
-		document.onkeydown  = preventDefaultForScrollKeys;
-	}
-
-	function enableScroll() {
-		if (window.removeEventListener)
-		window.removeEventListener('DOMMouseScroll', preventDefault, false);
-		window.onmousewheel = document.onmousewheel = null;
-		window.onwheel = null;
-		window.ontouchmove = null;
-		document.onkeydown = null;
-	}
-	function rgbToHsl(r, g, b){
+ //START Color
+	function rgbToHsl(r, g, b){ //TODO write down original source
 		r /= 255, g /= 255, b /= 255;
 		var max = Math.max(r, g, b), min = Math.min(r, g, b);
 		var h, s, l = (max + min) / 2;
@@ -605,5 +547,5 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast,$sani
 
 		return [Math.round(r * 255.0), Math.round(g * 255.0), Math.round(b * 255.0)];
 	}
-
+	//END color
 });
