@@ -16,12 +16,16 @@
 
   <md-dialog-content layout="column" layout-align="center center">
     <div ng-hide="loading" flex layout="column" layout-align="center center">
-      <div ng-hide="setDimentions" layout="column">
-        <div id="logoTemp" layout="column" layout-align="start start">
+      <div ng-hide="setDimentions" layout="column" layout-align="center center">
+        <div id="logoTemp" layout="column" layout-align="center center">
         </div>
         <h5 layout="row" layout-align="center center"> Dimensions {{width}}x{{height}} </h5>
-        <md-button  class='md-raised md-accent'id="link" >
-        </md-button>
+        <div layout="row">
+          <div  class='md-raised md-accent md-button md-default-theme' id="link"> <!--insert download png -->
+          </div>
+          <div class='md-raised md-accent md-button md-default-theme' id="linksvg">
+          </div>
+        </div>
       </div>
       <div layout-align="center center" ng-show="setDimentions">
         <md-input-container>
@@ -68,7 +72,7 @@ md-dialog-content{
 }
 a{
   text-decoration: none;
-  color: rgb(255,255,255);
+  color: #FFF;
 
 }
 </style>

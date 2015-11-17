@@ -174,7 +174,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 			else
 			ob.show = false;
 		});
-			$scope.$apply();
+		$scope.$apply();
 	}
 	//END Hover || feedback
 
@@ -215,7 +215,8 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 
 	//START Dialogs
 	function showFontDialog($event) { //TODO
-		var parentEl = angular.element('body');
+		$('#dialogPlacer').css('pointer-events','auto');
+		var parentEl = angular.element('#dialogPlacer');
 		$mdDialog.show({
 			parent: parentEl,
 			targetEvent: $event,
@@ -315,8 +316,9 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 		}
 		$scope.getLink = function(width){
 			var svg = document.getElementById('svgLogo').cloneNode(true);
-			svg.setAttribute("id", "tempsvgLogo");
-			$('#logoTemp').html(svg);
+
+
+			$('#logoTemp').html($scope.svg);
 			svg.removeAttribute("inkscape:version");
 			svg.removeAttribute("sodipodi:version");
 			var image  = $(svg).context.outerHTML;
@@ -334,16 +336,14 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 				var img = new Image();
 				img.src = "upload/download.svg?" + Math.random() * 4;
 				img.onload = function(){
-					console.log("loaded2");
 					var canvas = document.getElementById("canvas");
 					canvas.height = $scope.height;
 					canvas.width = $scope.width;
 					canvas.getContext('2d').drawImage(img, 0, 0,$scope.width,$scope.height);
 					var t = Canvas2Image.convertToPNG(canvas,$scope.width,$scope.height);
-					$('#link').html("<a href='" + t.src + "' download>Download link</a>");
-					console.debug($scope.loading);
+					$('#link').html("<a href='" + t.src + "' download>Download PNG</a>");
+					$('#linksvg').html("<a href='upload/download.svg' download>Download SVG</a>");
 					$scope.loading = false;
-					console.debug($scope.loading);
 					$scope.$apply();
 				};
 			}, function (resp) {
@@ -355,7 +355,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 
 	//START Font
 	//all website that supply fontds and give an 404 on non excisiting pages
-	var fontWebsites = [{before:"http://www.1001fonts.com/",after:"-font.html"},{before:"https://typekit.com/fonts/",after:""},{before:"http://fontzone.net/font-details/",after:""},{before:"https://www.google.com/fonts/specimen/",after:""}]; //{before:"",after:""}
+	var fontWebsites = [{before:"http://www.1001fonts.com/",after:"-font.html"},{before:"https://typekit.com/fonts/",after:""},{before:"https://www.google.com/fonts/specimen/",after:""}]; //{before:"",after:""}
 	$scope.missingFontWebsites = [];
 	var fontSitesCallBackData = [];
 	var fontSitesCallBack = [];
@@ -378,8 +378,9 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 	//END Font
 
 	//START init
-	var textElements = "text";
-	var coloredElements = ["fill","stroke"]; //TODO add gradient
+	var textElements = "tspan"; //TODO tspan or text?
+	var coloredElements = [{element:"*",styles:["fill","stroke"]},{element:"stop",styles:["stop-color"]}]; //TODO add gradient
+
 	function setImage(){
 		$scope.logo.loading= true;
 		$.get("upload/image.svg?" + Math.random() * 1000,function(svgDoc){
@@ -407,28 +408,40 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 		fontSitesCallBackData = [];
 		fontSitesCallBack = [];
 		$scope.notAvailableFonts = [];
+		//Setup for missing fonts
 		var fontDetector = new Detector();
-		$(textElements).each(function(i,ob) { //get all texts
-			var font = $(ob).css('font-family').toLowerCase();
+		$(textElements).each(function(i,elem) { //get all texts
+			//get missing fonts
+			var font = $(elem).css('font-family').toLowerCase();
 			if(fontDetector.detect(font) == false){ //detecr if font is available
+				var exist = false;
 				$.each($scope.notAvailableFonts,function(i,ob){ //check if font is not in list
-					if(ob == font.toLowerCase())
-					return false; //break each
+					console.debug(ob + " " + font.substring(0,1).toUpperCase() + font.substring(1));
+					if(ob == (font.substring(0,1).toUpperCase() + font.substring(1))){
+						exist = true;
+						return false; //break each
+					}
 				});
-				var name= font.substring(0,1).toUpperCase() + font.substring(1)
-				$scope.notAvailableFonts.push(name); //add font to list
-				getFontSitesCallBack(name);
-			}
-			var text = this.textContent;
-			for (var i = 0; i < $scope.textElements.length; i++) { //not add fields for equal texts
-				if($scope.textElements[i].text == text){
-					$scope.textElements[i].objects.push(ob);
-					return true; //continue each
+				if(!exist){
+					var name= font.substring(0,1).toUpperCase() + font.substring(1);
+					$scope.notAvailableFonts.push(name); //add font to list
+					getFontSitesCallBack(name);
+					console.debug("missingfont: " + name);
 				}
-			};
-			var objects = [];
-			objects.push(ob);
-			$scope.textElements.push({text:text,objects:objects});//create new for new color
+			}
+			//end get missing fonts
+			$.each(elem.childNodes,function(i,ob){ //get all elements in text
+				var text = this.textContent;
+				for (var i = 0; i < $scope.textElements.length; i++) { //not add fields for equal texts
+					if($scope.textElements[i].text == text){
+						$scope.textElements[i].objects.push(ob);
+						return true; //continue each
+					}
+				};
+				var objects = [];
+				objects.push(ob);
+				$scope.textElements.push({text:text,objects:objects});//create new for new color
+			});
 		});
 		if($scope.notAvailableFonts.length > 0){ //show dialog if one or more fonts are not available
 			var obj = []
@@ -447,32 +460,36 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 						$scope.missingFontWebsites[fontSitesCallBackData[i].name].push(fontSitesCallBackData[i].url);
 					}
 				}
+				console.debug($scope.missingFontWebsites);
 				showFontDialog();
 			});
 		}
-		$("#logo").find("*").not("g").not("svg").each(function(i,ob) { //get all elements in id logo but not the groups and svg
-			$.each(coloredElements,function(x,el){
-				var rawColor = $(ob).css(el).match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-				var alpha = $(ob).css("fill-opacity");
-				if(rawColor != null){
-					var color = {css:rawColor[0],r:rawColor[1],g:rawColor[2],b:rawColor[3],a:alpha};
-					for (var i = 0; i < $scope.colorElements.length; i++) {
-						if($scope.colorElements[i].color.css == color.css){
-							$scope.colorElements[i].objects.push({ob:ob,el:el});
-							$(ob).css(el,"rgba(" + color.r + "," + color.g + "," + color.b  + "," + color.a + ")");
-							return true; //continue each
-						}
-					};
-					var objects = [];
-					objects.push({ob:ob,el:el});
-					var rawHSL = rgbToHsl(color.r,color.g,color.b);
-					var hsl = {h:rawHSL[0],s:rawHSL[1],l:rawHSL[2]};
-					$scope.colorElements.push({HSL:hsl,color:color,objects:objects,show:false});//create new for new color
-					$(ob).css(el,"rgba(" + color.r + "," + color.g + "," + color.b  + "," + color.a + ")");
-				}
+
+		$.each(coloredElements,function(e,coloredEl){
+			console.debug(coloredEl);
+			$("#logo").find(coloredEl.element).not("g").not("svg").each(function(i,ob) { //get all elements in id logo but not the groups and svg
+				$.each(coloredEl.styles,function(x,el){
+					var rawColor = $(ob).css(el).match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+					var alpha = $(ob).css("fill-opacity");
+					if(rawColor != null){
+						var color = {css:rawColor[0],r:rawColor[1],g:rawColor[2],b:rawColor[3],a:alpha};
+						for (var i = 0; i < $scope.colorElements.length; i++) {
+							if($scope.colorElements[i].color.css == color.css && alpha == $scope.colorElements[i].color.a){ //combine equal elements
+								$scope.colorElements[i].objects.push({ob:ob,el:el});
+								$(ob).css(el,"rgba(" + color.r + "," + color.g + "," + color.b  + "," + color.a + ")");
+								return true; //continue each
+							}
+						};
+						var objects = [];
+						objects.push({ob:ob,el:el});
+						var rawHSL = rgbToHsl(color.r,color.g,color.b);
+						var hsl = {h:rawHSL[0],s:rawHSL[1],l:rawHSL[2]};
+						$scope.colorElements.push({HSL:hsl,color:color,objects:objects,show:false});//create new for new color
+						$(ob).css(el,"rgba(" + color.r + "," + color.g + "," + color.b  + "," + color.a + ")");
+					}
+				});
 			});
 		});
-
 		$scope.setStartHistory("colorElements",$scope.colorElements);
 		$scope.setStartHistory("textElements",$scope.textElements);
 		var zoom = 1;
@@ -502,7 +519,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 	//END inti
 
 
- //START Color
+	//START Color
 	function rgbToHsl(r, g, b){ //TODO write down original source
 		r /= 255, g /= 255, b /= 255;
 		var max = Math.max(r, g, b), min = Math.min(r, g, b);
