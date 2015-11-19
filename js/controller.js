@@ -140,17 +140,18 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 			$(ob.ob).hover(hoverin,hoverout);
 			$(ob.ob).mousedown(clickel);
 			$(ob.ob).mouseup(mouseUp);
+			ob.ob.addEventListener("touchstart", clickel, false);
+			ob.ob.addEventListener("touchend", mouseUp, false);
 			ob.ob.inArray = array;
 			ob.ob.i= index;
 		});
 	}
 	$scope.elementsLocked = false; //lick elements on click
 	function mouseUp(){ //show user that he selected an element
-		$(this).css("fill",this.color);
+		$('#iconHeaderContent').css("background-color",'rgb(63,81,181)');
 	}
 	function clickel(){ //lock element
-		this.color = $(this).css("fill");
-		$(this).css("fill","#c7c7c7");
+		$('#iconHeaderContent').css("background-color",'#413fb5');
 		if($scope.elementsLocked)
 		openEl(this);
 		else
@@ -165,6 +166,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 	function openEl(el){ //open field corresponding to hover
 		var field = $scope[el.inArray][el.i];
 		$scope.colorCardShow(field);
+		$scope.$apply();
 	}
 
 	$scope.colorCardShow = function(field){ //open current field and close the rest
@@ -174,7 +176,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 			else
 			ob.show = false;
 		});
-		$scope.$apply();
 	}
 	//END Hover || feedback
 
@@ -262,6 +263,13 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 			$mdDialog.hide();
 		}
 		$scope.progressUpload = 0;
+		$scope.srcUpload = function(src,tosrc){
+			$.post("saveas.php", { src: src,tosrc:tosrc} ,function(data){
+				console.debug(data);
+				$scope.closeDialog();
+				this.upload = true;
+			});
+		}
 		$scope.upload = function (file) {
 			Upload.upload({
 				url: 'upload.php',
@@ -332,7 +340,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 				file: blob,
 				data: { name: "download",extention:"svg"}
 			}).then(function (resp) {
-				console.log("loaded");
 				var img = new Image();
 				img.src = "upload/download.svg?" + Math.random() * 4;
 				img.onload = function(){
@@ -416,7 +423,7 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 			if(fontDetector.detect(font) == false){ //detecr if font is available
 				var exist = false;
 				$.each($scope.notAvailableFonts,function(i,ob){ //check if font is not in list
-					console.debug(ob + " " + font.substring(0,1).toUpperCase() + font.substring(1));
+
 					if(ob == (font.substring(0,1).toUpperCase() + font.substring(1))){
 						exist = true;
 						return false; //break each
@@ -426,7 +433,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 					var name= font.substring(0,1).toUpperCase() + font.substring(1);
 					$scope.notAvailableFonts.push(name); //add font to list
 					getFontSitesCallBack(name);
-					console.debug("missingfont: " + name);
 				}
 			}
 			//end get missing fonts
@@ -466,7 +472,6 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 		}
 
 		$.each(coloredElements,function(e,coloredEl){
-			console.debug(coloredEl);
 			$("#logo").find(coloredEl.element).not("g").not("svg").each(function(i,ob) { //get all elements in id logo but not the groups and svg
 				$.each(coloredEl.styles,function(x,el){
 					var rawColor = $(ob).css(el).match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);

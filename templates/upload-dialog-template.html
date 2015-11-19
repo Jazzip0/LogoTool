@@ -8,22 +8,30 @@
   </md-toolbar>
 
   <md-dialog-content>
-        <div  layout="column" layout layout-align="center center" id="uploadField">
-        <md-progress-circular ng-show="(progressUpload > 0 && progressUpload != 100)" md-mode="determinate" value="..."></md-progress-circular>
-        <div flex ng-show="(progressUpload == 0)"  ngf-select="upload($file)" ngf-drop="upload($file)" class="drop-box" id="upload" layout="column" layout-align="center center">
-          <div id="dropText" layout="row" layout-align="center center">
-              <div flex="80">
-                Click or Drop to upload files
-              </div>
+    <div  layout="column" layout layout-align="center center" id="uploadField">
+      <md-progress-circular ng-show="(progressUpload > 0 && progressUpload != 100)" md-mode="determinate" value="..."></md-progress-circular>
+      <div flex ng-show="(progressUpload == 0)"  ngf-select="upload($file)" ngf-drop="upload($file)" class="drop-box" id="upload" layout="column" layout-align="center center">
+        <div id="dropText" layout="row" layout-align="center center">
+          <div flex="80">
+            Click or Drop to upload files
           </div>
-          <div>
-            <i class="fa fa-file-o"></i>
-          </div>
-            <div  ngf-no-file-drop>
-              File Drag/Drop is not supported for this browser
-            </div>
+        </div>
+        <div>
+          <i class="fa fa-file-o"></i>
+        </div>
+        <div  ngf-no-file-drop>
+          File Drag/Drop is not supported for this browser
         </div>
       </div>
+    </div>
+    <div layout="column" id="examples">
+      <h5> Or choose one of examples:</h5>
+      <div layout="row" >
+        <md-button ng-click="srcUpload('images/examples/JBN.svg','upload/image.svg')"><img align="middle" src="images/examples/JBN.svg"/></md-button >
+          <span class="verticalLine"></span>
+        <md-button ng-click="srcUpload('images/examples/SCG.svg','upload/image.svg')"><img align="middle" src="images/examples/SCG.svg"/></md-button >
+      </div>
+    </div>
   </md-dialog-content>
   <div class="md-actions">
     <md-button ng-click="closeDialog()" class="md-primary">
@@ -31,22 +39,37 @@
     </md-button>
   </div>
 </md-dialog>
+
 <style type="text/css">
-#uploadField{
-  width:200px;
-    height:200px;
+md-dialog{
+  width:300px;
 }
-  #upload{
-     border:2px dashed gray;
-    
-    text-align: center;
-  }
-  #upload.dragover{
-    color:#FFF;
-    transition: all 0.7s ease;
-    transition-property: box-shadow,background,color;
-    background-color:#2196F3;
-    box-shadow: 0 0 0 20px #2196F3;
-    border:none;
-  }
+.verticalLine {
+    border-left:1px solid #ccc;
+}
+img{
+width:100%;
+height:100%;
+}
+
+#uploadField{
+  width:100%;
+  height:200px;
+}
+/*#examples{
+  width:200px;
+}*/
+#upload{
+  border:2px dashed gray;
+
+  text-align: center;
+}
+#upload.dragover{
+  color:#FFF;
+  transition: all 0.7s ease;
+  transition-property: box-shadow,background,color;
+  background-color:#2196F3;
+  box-shadow: 0 0 0 20px #2196F3;
+  border:none;
+}
 </style>
