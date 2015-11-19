@@ -100,6 +100,12 @@ svg{
   }
 }
 @media screen and (min-width:1200px){
+  body{
+    background-color: #e7e5e5;
+  }
+  #iconHeaderContent{
+    background-color: transparent;
+  }
   #svgLogo{
     height: 80%;
   }

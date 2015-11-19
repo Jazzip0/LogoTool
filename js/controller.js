@@ -148,10 +148,16 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 	}
 	$scope.elementsLocked = false; //lick elements on click
 	function mouseUp(){ //show user that he selected an element
-		$('#iconHeaderContent').css("background-color",'rgb(63,81,181)');
+		$('#iconHeaderContent').css("background-color",this.color);
 	}
 	function clickel(){ //lock element
+		this.color = $('#iconHeaderContent').css("background-color");
+		if(this.color == "rgba(0, 0, 0, 0)")
+		$('#iconHeaderContent').css("background-color",'#d3d3d3');
+		else
 		$('#iconHeaderContent').css("background-color",'#413fb5');
+
+		console.debug(this.color);
 		if($scope.elementsLocked)
 		openEl(this);
 		else
