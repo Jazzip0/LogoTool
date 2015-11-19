@@ -5,15 +5,15 @@
 	<meta charset="UTF-8">
 	<title>LogoTool</title>
 	<link rel="icon" href="images/favicon.png" type="image/png">
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css">
+	<link rel="stylesheet" href="css/angularmaterial.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="css/animations.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script src="js/jquery.js" type="text/javascript"></script>
 	<script type="text/javascript" src="js/mousewheel.js"></script>
 	<script type="text/javascript" src="js/smoothscroll.js"></script>
-	<script type="text/javascript" src="http://gabelerner.github.io/canvg/rgbcolor.js"></script>
-	<script type="text/javascript" src="http://gabelerner.github.io/canvg/StackBlur.js"></script>
+	<script type="text/javascript" src="js/rgbcolor.js"></script>
+	<script type="text/javascript" src="js/StackBlur.js"></script>
 	<script type="text/javascript" src="js/canvas2image.js"></script>
 	<script type="text/javascript" src="js/svgpanzoom.js"></script>
 	<script src="js/fontdetect.js" type="text/javascript"></script>
@@ -259,11 +259,11 @@
 	<canvas  id="canvas" width="1000px" height="1000px"></canvas>
 </div>
 <!-- Angular Material Dependencies -->
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+<script src="js/angular.min.js"></script>
+<script src="js/angular-animate.min.js"></script>
+<script src="js/angular-aria.min.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
+<script src="js/angular-material.min.js"></script>
 <script src="ng-file-upload/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
 <script src="ng-file-upload/ng-file-upload.min.js"></script>
 <script type="text/javascript" src="js/sanitize.js"></script>

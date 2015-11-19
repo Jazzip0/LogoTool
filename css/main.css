@@ -75,7 +75,7 @@ svg{
   position: relative;
   width:80%;
   height: 100%;
-  cursor: url(http://joep.pieterbos.me/logotool/images/cursorselect.png) 16 16, pointer;
+  cursor: url(/logotool/images/cursor.png) 16 16, pointer;
 
 
 }
@@ -106,14 +106,8 @@ svg{
   #iconHeader{
       height: 100vh;
   }
-  #iconHeaderContent{
-    background-color: transparent;
-  }
   #zoomButtons{
     bottom:60px;
-  }
-  body{
-    background-color: #e5e5e5;
   }
   div #resetButton{
     bottom:60px;
