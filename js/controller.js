@@ -1,4 +1,4 @@
-var app = angular.module('myApp', ['ngMaterial','ngFileUpload']);
+var app = angular.module('myApp', ['ngMaterial','ngFileUpload','ngTouch']);
 app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 
 	//START Set color and text explanation make changes reversable

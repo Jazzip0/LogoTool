@@ -19,6 +19,15 @@
 	<script src="js/fontdetect.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-70394803-1', 'auto');
+  ga('send', 'pageview');
+
+
 		try {
 			$.browserSelector();
 			// Adds window smooth scroll on chrome.
@@ -151,7 +160,7 @@
 										<md-tabs flex>
 											<md-tab label="RGBA" flex>
 												<md-content flex>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex min="0" max="255" ng-model="field.color.r" aria-label="red" id="red-slider" ng-change="updateColor(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
@@ -161,7 +170,7 @@
 															</md-input-container>
 														</div>
 													</div>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex ng-model="field.color.g" min="0" max="255" aria-label="green" id="green-slider" ng-change="updateColor(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center" >
@@ -171,7 +180,7 @@
 															</md-input-container>
 														</div>
 													</div>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex ng-model="field.color.b" min="0" max="255" aria-label="blue" id="blue-slider" ng-change="updateColor(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
@@ -181,7 +190,7 @@
 															</md-input-container>
 														</div>
 													</div>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider step="0.0039" flex ng-model="field.color.a" min="0" max="1" aria-label="alpha" id="alpha-slider" ng-change="updateColor(field)">
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
@@ -195,7 +204,7 @@
 											</md-tab>
 											<md-tab label="HSLA">
 												<md-content>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex min="0" max="255" ng-model="field.HSL.h" aria-label="red" id="hue-slider" ng-change="updateHSL(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
@@ -205,7 +214,7 @@
 															</md-input-container>
 														</div>
 													</div>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex ng-model="field.HSL.s" min="0" max="255" aria-label="green" id="saturation-slider" ng-change="updateHSL(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center" >
@@ -215,7 +224,7 @@
 															</md-input-container>
 														</div>
 													</div>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)' ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider flex ng-model="field.HSL.l" min="0" max="255" aria-label="blue" id="lightness-slider" ng-change="updateHSL(field)" >
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
@@ -225,7 +234,7 @@
 															</md-input-container>
 														</div>
 													</div>
-													<div layout="row" ng-mouseup='setHistory("colorElements",field)'>
+													<div layout="row" ng-touchend='setHistory("colorElements",field)'  ng-mouseup='setHistory("colorElements",field)'>
 														<md-slider step="0.0039" flex ng-model="field.color.a" min="0" max="1" aria-label="alpha" id="alpha-slider" ng-change="updateColor(field)">
 														</md-slider>
 														<div flex="20"  layout layout-align="right center">
@@ -267,6 +276,8 @@
 <script src="ng-file-upload/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
 <script src="ng-file-upload/ng-file-upload.min.js"></script>
 <script type="text/javascript" src="js/sanitize.js"></script>
+<script type="text/javascript" src="js/ngTouch.js"></script>
+
 
 <!-- controller -->
 
