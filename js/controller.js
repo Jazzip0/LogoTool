@@ -1,5 +1,8 @@
+
+
 var app = angular.module('myApp', ['ngMaterial','ngFileUpload','ngTouch']);
 app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
+
 
 	//START Set color and text explanation make changes reversable
 	$scope.history = { //history is saved as object:
@@ -277,13 +280,21 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 			});
 		}
 		$scope.upload = function (file) {
+
 			Upload.upload({
 				url: 'upload.php',
 				method: 'POST',
 				file: file
 			}).then(function (resp) {
-				$scope.closeDialog();
-				this.upload = true;
+
+				var extention = file.name.substring(file.name.lastIndexOf(".") + 1);
+				if(extention != "svg"){
+					console.log("non SVG uploaded");
+					trace();
+				}else{
+					$scope.closeDialog();
+					this.upload = true;
+				}
 			}, function (resp) {
 				console.log('Error status: ' + resp.status);
 			}, function (evt) {

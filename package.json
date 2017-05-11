@@ -1,0 +1,25 @@
+{
+  "name": "logotool",
+  "version": "0.0.0",
+  "description": "![banner](http://joep.pieterbos.me/logotool/images/logotool_banner.png)",
+  "main": "index.php",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "autotrace": "~0.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JoepSchyns/LogoTool.git"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/JoepSchyns/LogoTool/issues"
+  }
+}

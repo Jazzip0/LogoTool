@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="css/animations.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script src="js/jquery.js" type="text/javascript"></script>
+	<script src="js/tranceBundle.js" type="text/javascript"></script>
 	<script type="text/javascript" src="js/mousewheel.js"></script>
 	<script type="text/javascript" src="js/smoothscroll.js"></script>
 	<script type="text/javascript" src="js/rgbcolor.js"></script>
