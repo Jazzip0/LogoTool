@@ -120,7 +120,7 @@
 
 	</div>
 	<div layout="column" flex-order="1" flex-order-sm="2" flex-order-md="2" flex-order-lg="2" id="scrollContent" >
-		<div layout="column" layout-md="row" layout-lg="row" layout-align-sm="center center" layout-align="center start">
+		<div layout="column" layout-md="row" layout-lg="row" layout-align-sm="center center" >
 			<div ng-show="textElements.length > 0" >
 				<md-card class="contentCard">
 					<md-content>
