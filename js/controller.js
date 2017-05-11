@@ -208,7 +208,8 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 	};
 	//END Toasts
 
-	//START Upload
+	//START Uploa
+
 	$scope.isDragging = false;
 	$scope.drag = function($isDragging, $class, $event){ //if an file is dragged in or out the screen
 		$scope.isDragging = $isDragging;
@@ -218,8 +219,32 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 		$mdDialog.hide();
 	}
 	$scope.logo = {loading:false};
+
 	angular.element(document).ready(function () { //show upload dialog on load
-		$scope.showUploadDialog();
+
+			//if there is a ?n={name} check if an image with name is on the server and load this
+			var name = getUrlParameter("n");
+			console.log("name: " + name);
+
+			if(name != undefined){ //if there is a variable present
+				var src ='images/examples/' + name + '.svg';
+				var tosrc = 'upload/image.svg';
+				console.log(src)
+				$.post("saveas.php", { src: src ,tosrc:tosrc} ,function(data){
+					console.log(data);
+					this.upload = false;
+
+					if(data.toLowerCase().includes("error")){ //if the image does not excisit on the server
+						$scope.showUploadDialog();
+					}else{
+						$('#dialogPlacer').css('pointer-events','none');
+						setImage();
+					}
+					
+				});
+			}else{
+				$scope.showUploadDialog();
+			}
 	});
 	//END Upload
 
@@ -587,4 +612,19 @@ app.controller('appController', function($scope, $mdDialog,Upload,$mdToast) {
 		return [Math.round(r * 255.0), Math.round(g * 255.0), Math.round(b * 255.0)];
 	}
 	//END color
+
+	var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
 });
